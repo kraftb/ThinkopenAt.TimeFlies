@@ -1,0 +1,27 @@
+{namespace flies=ThinkopenAt\TimeFlies\ViewHelpers}
+
+<f:layout name="Default" />
+
+<f:section name="Title">New category</f:section>
+
+<f:section name="Content">
+	<p>Just fill out the following form to create a new category:</p>
+
+	<f:form action="create" objectName="newCategory">
+		<ol>
+			<li>
+				<label for="name">Category name</label>
+				<f:form.textfield property="name" id="name" />
+			</li>
+
+			<li>
+				<label for="name">Parent category</label>
+				<flies:form.categorySelect options="{rootCategories}" property="parent" id="parent" optionLabelField="name" prependOptionLabel="[ROOT]" />
+			</li>
+		
+			<li>
+				<f:form.submit value="Create" />
+			</li>
+		</ol>
+	</f:form>
+</f:section>

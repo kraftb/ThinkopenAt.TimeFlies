@@ -1,0 +1,49 @@
+<f:layout name="Default" />
+		
+<f:section name="Title">
+	<f:if condition="{currentCategory}">
+		<f:then>
+			Items in category "{currentCategory.name}"
+		</f:then>
+		<f:else>
+			Items in root
+		</f:else>
+	</f:if>
+</f:section>
+
+<f:section name="Content">
+
+	<f:if condition="{items}">
+		<f:then>
+			<f:render partial="ItemList" arguments="{items: items, currentCategory: currentCategory}" />
+		</f:then>
+		<f:else>
+			<p>No items created yet.</p>
+		</f:else>
+	</f:if>
+	<p><f:link.action action="new">Create a new item</f:link.action></p>
+	<p><f:link.action action="configureReport" arguments="{category: currentCategory}">Create a report</f:link.action></p>
+
+	<hr />
+	<f:if condition="{subCategories}">
+		<f:then>
+			<ul>
+				<f:for each="{subCategories}" as="category">
+					<li>
+						<f:link.action action="index" arguments="{category: category}">{category.name}</f:link.action>
+						<f:link.action controller="category" action="edit" arguments="{category: category}">Edit category</f:link.action>
+<!--
+						<f:form controller="category" action="delete" arguments="{category: category}">
+							<f:form.submit value="Delete category" />
+						</f:form>
+-->
+					</li>
+				</f:for>
+			</ul>
+		</f:then>
+	</f:if>
+	<f:if condition="{currentCategory}">
+		<f:link.action action="index" arguments="{category: currentCategory.parent}">Back</f:link.action>
+	</f:if>
+</f:section>
+

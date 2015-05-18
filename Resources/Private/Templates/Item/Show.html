@@ -1,0 +1,28 @@
+<f:layout name="Default" />
+
+<f:section name="Title">Item details</f:section>
+
+<f:section name="Content">
+	<table>
+		<tr>
+			<th>Date</th>
+			<td><f:format.date format="Y-m-d">{item.begin}</f:format.date></td>
+		</tr>
+		<tr>
+			<th>Duration</th>
+			<td><f:format.date format="H:i">{item.begin}</f:format.date> - <f:format.date format="H:i">{item.end}</f:format.date></td>
+		</tr>
+		<tr>
+			<th>Category</th>
+			<td>{item.category.name}</td>
+		</tr>
+		<tr>
+			<th>Comment</th>
+			<td>{item.comment}</td>
+		</tr>
+	</table>
+
+	<f:link.action action="index" arguments="{category: currentCategory}">Back</f:link.action>
+
+</f:section>
+

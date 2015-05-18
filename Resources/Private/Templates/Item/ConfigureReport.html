@@ -1,0 +1,39 @@
+{namespace flies=ThinkopenAt\TimeFlies\ViewHelpers}
+
+<f:layout name="Default" />
+
+<f:section name="Title">Generate a report of items in this category "{category.name}"</f:section>
+
+<f:section name="Content">
+	<f:form action="generateReport" format="csv" arguments="{category: category}" objectName="reportConfiguration">
+		<ol>
+			<li>
+				<label for="beginDate">From</label>
+				<f:form.textfield property="beginDate" value="{f:format.date(date: now, format: 'Y-m-d')}" size="10" class="dateField itemField" />
+				<f:form.textfield property="beginTime" value="9:00" size="5" class="timeField itemField" />
+			</li>
+			<li>
+				<label for="endDate">Until</label>
+				<f:form.textfield property="endDate" value="{f:format.date(date: now, format: 'Y-m-d')}" size="10" class="dateField itemField" />
+				<f:form.textfield property="endTime" value="10:00" size="5" class="timeField itemField" />
+			</li>
+			<li>
+				<label for="endDate">Include subcategories</label>
+				<f:form.checkbox property="includeSubcategories" value="includeSubcategories" />
+			</li>
+			<li>
+				<label for="commentOperator">Comment</label>
+				<f:form.select property="commentOperator" class="itemField commentField" options="{dont_care: 'Don\'t care', contains: 'Contains', not_contains: 'Doesn\'t contain'}" />
+				<f:form.textfield property="comment" class="itemField commentField" size="80" />
+			</li>
+		<br />
+		<f:form.submit name="generateReport" value="Generate report" />
+
+	</f:form>
+
+	<script type="text/javascript" src="{f:uri.resource(path: 'Libraries/jquery/jquery-1.9.1.min.js', package: 'TYPO3.Welcome')}"></script>
+	<script type="text/javascript" src="{f:uri.resource(path: 'JavaScript/TimeFlies.js')}"></script>
+	<script type="text/javascript" src="{f:uri.resource(path: 'JavaScript/timeField.js')}"></script>
+	<script type="text/javascript" src="{f:uri.resource(path: 'JavaScript/dateField.js')}"></script>
+
+</f:section>

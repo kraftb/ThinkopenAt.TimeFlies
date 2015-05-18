@@ -1,0 +1,11 @@
+<ul>
+	<f:for each="{categories}" as="category">
+		<li>
+			<f:link.action action="show" arguments="{category: category}">{category.name}</f:link.action>
+			<f:link.action action="edit" arguments="{category: category}">Edit</f:link.action>
+			<f:form action="delete" arguments="{category: category}">
+				<f:form.submit value="Delete" />
+			</f:form>
+		</li>
+	</f:for>
+</ul>

@@ -1,0 +1,16 @@
+<f:layout name="Default" />
+
+<f:section name="Title">A list of categories</f:section>
+
+<f:section name="Content">
+	<f:if condition="{categories}">
+		<f:then>
+			<f:render partial="CategoryChildren" arguments="{categories: categories}" />
+		</f:then>
+		<f:else>
+			<p>No categories created yet.</p>
+		</f:else>
+	</f:if>
+	<p><f:link.action action="new">Create a new category</f:link.action></p>
+</f:section>
+
