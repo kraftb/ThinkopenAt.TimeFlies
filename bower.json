@@ -1,0 +1,24 @@
+{
+  "name": "ThinkopenAt.TimeFlies",
+  "version": "0.0.0",
+  "authors": [
+    "Bernhard Kraft <kraftb@think-open.at>"
+  ],
+  "description": "TYPO3 Flow package implementing an easy to use time logging web app",
+  "keywords": [
+    "TYPO3",
+    "flow",
+    "time",
+    "logging",
+    "timesheet"
+  ],
+  "license": "GPLv2",
+  "homepage": "http://think-open.at",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
