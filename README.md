@@ -90,7 +90,7 @@ on the "Create a new item" link.
 
 You will then see an interface similar to this screenshot:
 
-![Time entry interface of TimeFlies](/Documentation/Images/TimeEntry.jpg?raw=true "Time entry interface")
+![Time entry interface of TimeFlies](/Documentation/Images/TimeEntry.png?raw=true "Time entry interface")
 
 As you can see you can easily add new rows by using the "Add line" button.
 
