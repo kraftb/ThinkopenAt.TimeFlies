@@ -143,6 +143,8 @@ class ItemController extends ActionController {
 	 * @return void
 	 */
 	public function updateAction(Item $item) {
+		$item->setBeginFromParts();
+		$item->setEndFromParts();
 		$this->itemRepository->update($item);
 		$this->addFlashMessage('Updated the item.');
 		$this->redirect('index');
