@@ -13,7 +13,7 @@
 				-
 				<f:form.textfield name="item[endTime]" value="{f:format.date(date: item.end, format: 'H:i')}" size="5" class="timeField endTime itemField" />
 				<flies:form.categorySelect options="{rootCategories}" name="item[category]" optionLabelField="name" prependOptionLabel="[ROOT]" class="itemField" value="{item.category}" />
-				<f:form.textfield name="item[comment]" value="{item.comment}" class="itemField commentField" size="80" />
+				<f:form.textfield name="item[comment]" value="{item.comment}" class="itemField commentField" size="80" maxlength="190" />
 			</div>
 		</div>
 		<f:form.submit value="Update" />
