@@ -1,11 +1,15 @@
 
 TimeFlies = {}; 
 
-TimeFlies.Time = function(timeString) {
+TimeFlies.Time = function(timeString, enableDayOffset) {
 
 	// Allow instantiation without the 'new' keyword
 	if ( !(this instanceof TimeFlies.Time) ) {
-		return new TimeFlies.Time( timeString );
+		return new TimeFlies.Time( timeString, enableDayOffset );
+	}
+
+	if ( typeof enableDayOffset == "boolean" && enableDayOffset) {
+		this.enableDayOffset = true;
 	}
 
 	this.fromString( timeString );
@@ -25,7 +29,9 @@ TimeFlies.Time.prototype = {
 	hour: 0,
 	minute: 0,
 	second: 0,
+	dayOffset: 0,
 
+	enableDayOffset: false,
 	minuteStep: 15,
 	separator: ':',
 
@@ -49,7 +55,7 @@ TimeFlies.Time.prototype = {
 	 * @return integer The seconds since 0:00
 	 */
 	toInt: function() {
-		return this.hour * 60 * 60 + this.minute * 60 + this.second;
+		return this.dayOffset * 24 * 3600 + this.hour * 3600 + this.minute * 60 + this.second;
 	},
 
 	/**
@@ -59,6 +65,18 @@ TimeFlies.Time.prototype = {
 	 * @return object Returns itself for call chaining
 	 */
 	fromString: function(current) {
+		if (this.enableDayOffset) {
+			var result = current.match(/\s+[+\-][1-9][0-9]*$/);
+			if (result && result.length == 1) {
+				var tmp = result[0];
+				var sign = tmp.charAt(0);
+				this.dayOffset = parseInt(tmp.substring(1));
+				if (sign == "-") {
+					dayOffset = -this.dayOffset;
+				}
+			}
+		}
+
 		var z = current.split(this.separator);
 		this.hour = parseInt(z[0]);
 		this.minute = parseInt(z[1]);
@@ -91,9 +109,23 @@ TimeFlies.Time.prototype = {
 		}
 		if (this.hour >= 24) {
 			this.hour -= 24;
+			if (this.enableDayOffset) {
+				this.dayOffset += 1;
+			}
 		}
 		if (this.hour < 0) {
 			this.hour += 24;
+			if (this.enableDayOffset) {
+				this.dayOffset -= 1;
+			}
+		}
+		// Support only positive day offsets.
+		// Setting a negative day offset for end-time doesn't make sense as end time
+		// must be larger than start time. And dayOffset is only supported for end time.
+		// A feature would be, to change the date to the day before when start time rolls
+		// over from 0:00 to 23:45 using the "-" key.
+		if (this.dayOffset < 0) {
+			this.dayOffset = 0;
 		}
 		return this;
 	},
@@ -105,7 +137,8 @@ TimeFlies.Time.prototype = {
 	 * @return string This time object formatted as string
 	 */
 	toString: function(includeSeconds) {
-		var res = this.hour + this.separator;
+		var res = "";
+		res += this.hour + this.separator;
 		if (this.minute < 10) {
 			res += "0";
 		}
@@ -116,6 +149,15 @@ TimeFlies.Time.prototype = {
 				res += "0";
 			}
 			res += this.second;
+		}
+		if (this.enableDayOffset && this.dayOffset != 0) {
+			res += " ";
+			if (this.dayOffset > 0) {
+				res += "+";
+			} else {
+				res += "-";
+			}
+			res += this.dayOffset;
 		}
 		return res;
 	},

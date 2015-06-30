@@ -123,7 +123,22 @@ class Item {
 	 * @return \ThinkopenAt\TimeFlies\Domain\Model\Category Returns itself for call chaining
 	 */
 	public function setEndFromParts() {
-		$this->end = \DateTime::createFromFormat('Y-m-d H:i', $this->getBeginDate().' '.$this->getEndTime());
+		$endTime = trim($this->getEndTime());
+		$pattern = '/(\s+[+\-])([1-9][0-9]*)$/';
+		$offset = 0;
+		if (preg_match($pattern, $endTime, $matches)) {
+			$endTime = trim(preg_replace($pattern, '', $endTime));
+			$sign = trim($matches[1]);
+			if ($sign !== '+') {
+				throw new \Exception('Negative day offsets not supported currently!');
+			}
+			$offset = (int)trim($matches[2]);
+		}
+		$this->end = \DateTime::createFromFormat('Y-m-d H:i', $this->getBeginDate().' '.$endTime);
+		if ($offset) {
+			$interval = new \DateInterval('P' . $offset . 'D');
+			$this->end->add($interval);
+		}
 		return $this;
 	}
 

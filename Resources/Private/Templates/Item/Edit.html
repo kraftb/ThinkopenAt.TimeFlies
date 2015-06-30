@@ -11,7 +11,7 @@
 				<f:form.textfield name="item[beginDate]" value="{f:format.date(date: item.begin, format: 'Y-m-d')}" size="10" class="dateField itemField" />
 				<f:form.textfield name="item[beginTime]" value="{f:format.date(date: item.begin, format: 'H:i')}" size="5" class="timeField beginTime itemField" />
 				-
-				<f:form.textfield name="item[endTime]" value="{f:format.date(date: item.end, format: 'H:i')}" size="5" class="timeField endTime itemField" />
+				<f:form.textfield name="item[endTime]" value="{f:format.date(date: item.end, format: 'H:i')} {flies:format.dayOffset(begin: item.begin, end: item.end)}" size="5" class="timeField endTime itemField" additionalAttributes="{data-enabledayoffset: 1}" />
 				<flies:form.categorySelect options="{rootCategories}" name="item[category]" optionLabelField="name" prependOptionLabel="[ROOT]" class="itemField" value="{item.category}" />
 				<f:form.textfield name="item[comment]" value="{item.comment}" class="itemField commentField" size="80" maxlength="190" />
 			</div>

@@ -5,6 +5,11 @@
 				<f:format.date format="Y-m-d">{item.begin}</f:format.date>
 				<f:format.date format="H:i">{item.begin}</f:format.date>
 				-
+				<f:if condition="{f:format.date(format: 'Y-m-D', date: item.begin)} != {f:format.date(format: 'Y-m-D', date: item.end)}">
+					<f:then>
+						<f:format.date format="Y-m-d">{item.end}</f:format.date>
+					</f:then>
+				</f:if>
 				<f:format.date format="H:i">{item.end}</f:format.date>,
 				{item.duration}h
 				({item.category.name})
