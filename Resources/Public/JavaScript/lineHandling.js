@@ -1,13 +1,14 @@
 
 var idx = 0;
 
-var addLineFunc = function(key) {
+var addLineFunc = function(key, keepCategory, keepComment) {
 	var cont = $('#itemsContainer');
 	var lastBlock = cont.children().last();
 
-	var newBlock = getNewBlock(lastBlock);
+	var newBlock = getNewBlock(lastBlock, keepCategory, keepComment);
 
-	newBlock.attr('id', 'item_'+idx);
+	var newId = 'item_'+idx;
+	newBlock.attr('id', newId);
 
 	newBlock.find('.itemField').each(function(index, obj) {
 		obj.name = updateFieldName(obj.name);
@@ -18,6 +19,7 @@ var addLineFunc = function(key) {
 	newBlock.show();
 
 	idx++;
+	return newId;
 };
 
 
