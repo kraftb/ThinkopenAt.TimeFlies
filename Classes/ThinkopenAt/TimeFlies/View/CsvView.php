@@ -7,74 +7,75 @@ namespace ThinkopenAt\TimeFlies\View;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
+use TYPO3\Flow\Utility\Arrays;
 
 /**
  * A CSV view
  *
  * @api
  */
-class CsvView extends \TYPO3\Flow\Mvc\View\AbstractView {
+class CsvView extends AbstractReportView {
 
 	/**
-	 * @Flow\Inject
-	 * @var \TYPO3\Flow\Reflection\ReflectionService
-	 */
-	protected $reflectionService;
-
-	/**
-	 * @var \TYPO3\Flow\Mvc\Controller\ControllerContext
-	 */
-	protected $controllerContext;
-
-	/**
-	 * Only variables whose name is contained in this array will be rendered
+	 * The Content-Type HTTP header line which will be sent for reports of this type.
 	 *
-	 * @var array
+	 * @var string
 	 */
-	protected $variablesToRender = array('value');
+	protected $contentType = 'text/csv';
+
 
 	/**
-	 * The CSV rendering configuration
-	 * The subkey "mapping" contains mulitple associative array with "CsvFieldname => PropertyName" mapping.
-	 * Each "mapping" subarray has a key which must be identifcal with the variables to render. By default only the
-	 * variable "value" will get rendered. So the minimal configuration will be something like:
+	 * The CSV rendering configuration.
+	 * This configuration is set in the Settings.yaml file. You can change any aspect in the
+	 * Flow main Settings.yaml file.
 	 *
-	 * array(
-	 *	'value' => array(
-	 *		'csvField1' => array(
-	 *			'name' => 'propertyA',
-	 *		),
-	 *		'csvField2' => array(
-	 *			'name' => 'propertyB',
-	 *		),
-	 *		'csvField3' => array(
-	 *			'name' => 'propertyC',
-	 *			'subProperty' => array(
-	 *				'name' => 'subPropertyA'
-	 *			)
-	 *		),
-	 *		'csvField4' => array(
-	 *			'name' => 'propertyD',
-	 *			'subProperty' => array(
-	 *				'name' => 'propertyA',
-	 *				'subProperty' => array(
-	 *					'name' => 'subPropertyB'
-	 *				)
-	 *			)
-	 *		),
-	 *		'csvField5' => array(
-	 *			'name' => 'dateProperty',
-	 *			'format' => 'dateFormat'
-	 *		),
-	 *	)
-	 * )
+	 * The key "ThinkopenAt.TimeFlies.Reports.General" contains mulitple associative values
+	 * with "CsvFieldname: PropertyName" mapping.
+	 *
+	 * Each "mapping" subarray has a key which must be identifcal with the variables to render.
+	 * By default only the variable "value" will get rendered. So the minimal configuration
+	 * will be something like set in the Configuration/Settings.yaml file or shown below:
+	 *
+	 * The "General" settings get overlaid with the "Csv" settings.
+	 *
+	 * ThinkopenAt:
+	 *   TimeFlies:
+	 *     Reports:
+	 *       General:
+	 *         mapping:
+	 *           value:
+	 *		         CsvField1:
+	 *               name: 'propertyA'
+	 *             CsvField2:
+	 *               name: 'propertyB'
+	 *             CsvField3:
+	 *               name: 'propertyC'
+	 *               subProperty:
+	 *                 name: 'subPropertyA'
+	 *             CsvField4:
+	 *               name: 'propertyD'
+	 *               subProperty:
+	 *                 name: 'propertyA'
+	 *                 subProperty:
+	 *                   name: 'subPropertyB'
+	 *             CsvField5:
+	 *               name: 'dateProperty'
+	 *               format: 'dateFormat'
+	 *
+	 *         outputHeaders: true
+	 *         customHeader: ''
+	 *         valueSeparator: ','
+	 *         lineSeparator: "\n" 
+	 *         enclosureCharacter: '"'
+	 *         escapeCharacter: '\'
+	 *
 	 *
 	 * The method "getPropertyA", "getPropertyB" getters will get used to retrieve the values from
-	 * the objects in "value" key in $this->variables
+	 * the objects in "value" key in the shown settings.
 	 *
-	 * If the value of a csv field is not a plain string it can also resolve object hierarchies.
+	 * If the value of a field is not a plain string it can also resolve object hierarchies.
 	 *
-	 * If one of the retrieved properties ia a \DateTime object the key "format" will get used to
+	 * If one of the retrieved properties is a \DateTime object the key "format" will get used to
 	 * determine the format in which to render the \DateTime object. If none is defined the global
 	 * $this->dateFormat setting will getused
 	 *
@@ -93,12 +94,6 @@ class CsvView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	 * @var array
 	 */
 	protected $configuration = array();
-
-	/**
-	 * @var \TYPO3\Flow\Persistence\PersistenceManagerInterface
-	 * @Flow\Inject
-	 */
-	protected $persistenceManager;
 
 	/**
 	 * @var array
@@ -136,34 +131,36 @@ class CsvView extends \TYPO3\Flow\Mvc\View\AbstractView {
 	protected $dateFormat = "Y-m-d H:i";
 
 	/**
-	 * Specifies which variables this CsvView should render
-	 * By default only the variable 'value' will be rendered
-	 *
-	 * @param array $variablesToRender
-	 * @return void
-	 * @api
-	 */
-	public function setVariablesToRender(array $variablesToRender) {
-		$this->variablesToRender = $variablesToRender;
-	}
-
-	/**
-	 * @param array $configuration The rendering configuration for this CSV view
-	 * @return void
-	 */
-	public function setConfiguration(array $configuration) {
-		$this->configuration = $configuration;
-	}
-
-	/**
 	 * Transforms the value view variable to a plain text CSV string
 	 *
 	 * @return string The CSV converted variables
 	 * @api
 	 */
 	public function render() {
-		$this->controllerContext->getResponse()->setHeader('Content-Type', 'text/csv');
+		$this->initRender();
 
+		$this->configuration = Arrays::arrayMergeRecursiveOverrule($this->settings['General'], $this->settings['Csv']);
+
+		$this->setupCsvOptions();
+
+		// Add custom header
+		if (isset($this->configuration['customHeader'])) {
+			$this->csvContent[] = $this->configuration['customHeader'];
+		}
+
+		// Render variables
+		$this->renderArray();
+
+		return implode($this->lineSeparator, $this->csvContent);
+	}
+
+	/**
+	 * Sets up various configurable aspects of the generated CSV.
+	 * All options are usually set from the Settings.yaml file
+	 *
+	 * @return void
+	 */
+	protected function setupCsvOptions() {
 		// Setup of class properties from configuration settings
 		if (isset($this->configuration['valueSeparator'])) {
 			$this->valueSeparator = $this->configuration['valueSeparator'];
@@ -181,16 +178,6 @@ class CsvView extends \TYPO3\Flow\Mvc\View\AbstractView {
 		if (isset($this->configuration['dateFormat'])) {
 			$this->dateFormat = $this->configuration['dateFormat'];
 		}
-
-		// Add custom header
-		if (isset($this->configuration['customHeader'])) {
-			$this->csvContent[] = $this->configuration['customHeader'];
-		}
-
-		// Render variables
-		$this->renderArray();
-
-		return implode($this->lineSeparator, $this->csvContent);
 	}
 
 	/**

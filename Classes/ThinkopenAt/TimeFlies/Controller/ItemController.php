@@ -185,31 +185,6 @@ class ItemController extends ActionController {
 		$items = $this->itemRepository->findForReport($reportConfiguration, $category);
 
 		$this->view->assign('value', $items);
-		$this->view->setConfiguration(array(
-			'mapping' => array(
-				'value' => array(
-					'begin' => array(
-						'name' => 'begin',
-					),
-					'end' => array(
-						'name' => 'end',
-					),
-					'duration' => array(
-						'name' => 'duration',
-					),
-					'category' => array(
-						'name' => 'category',
-						'subProperty' => array(
-							'name' => 'name',
-						),
-					),
-					'comment' => array(
-						'name' => 'comment',
-					),
-				),
-			),
-			'outputHeaders' => TRUE,
-		));
 	}
 
 }

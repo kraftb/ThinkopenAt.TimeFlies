@@ -1,0 +1,38 @@
+
+#
+# Settings for TimeFlies
+#
+# This file configures various aspects of TimeFlies
+# 
+
+ThinkopenAt:
+  TimeFlies:
+    Reports:
+      General:
+        mapping:
+          value:
+            Begin:
+              name: 'begin'
+            End:
+              name: 'end'
+            Duration:
+              name: 'duration'
+            Category:
+              name: 'category'
+              subProperty:
+                name: 'name'
+            Comment:
+              name: 'comment'
+
+      Csv:
+        outputHeaders: true
+#        customHeader: ''
+#        valueSeparator: ','
+#        lineSeparator: "\n" 
+#        enclosureCharacter: '"'
+#        escapeCharacter: '\'
+
+      OpenOfficeSpreadsheet:
+        templateFile: ''
+
+
