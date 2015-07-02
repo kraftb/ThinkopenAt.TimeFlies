@@ -24,15 +24,12 @@ ThinkopenAt:
             Comment:
               name: 'comment'
 
-      Csv:
+      ThinkopenAt.TimeFlies.Csv:
+        viewClass: 'ThinkopenAt\TimeFlies\View\CsvView'
         outputHeaders: true
 #        customHeader: ''
 #        valueSeparator: ','
 #        lineSeparator: "\n" 
 #        enclosureCharacter: '"'
 #        escapeCharacter: '\'
-
-      OpenOfficeSpreadsheet:
-        templateFile: ''
-
 

@@ -5,7 +5,7 @@
 <f:section name="Title">Generate a report of items in this category "{category.name}"</f:section>
 
 <f:section name="Content">
-	<f:form action="generateReport" format="csv" arguments="{category: category}" objectName="reportConfiguration">
+	<f:form action="generateReport" arguments="{category: category}" objectName="reportConfiguration">
 		<ol>
 			<li>
 				<label for="beginDate">From</label>
@@ -26,10 +26,24 @@
 				<f:form.select property="commentOperator" class="itemField commentField" options="{dont_care: 'Don\'t care', contains: 'Contains', not_contains: 'Doesn\'t contain'}" />
 				<f:form.textfield property="comment" class="itemField commentField" size="80" />
 			</li>
+		</ol>
 		<br />
+
+		<f:if condition="{possibleFormats -> f:count()}">
+			<div class="possible-formats">
+			<f:for each="{possibleFormats}" key="type" as="format">
+				<div class="possible-format">
+					<f:form.radio name="@format" value="{type}" id="format_{type}" checked="{format.selected}" /> <label for="format_{type}"><strong>{format.name}</strong> ({format.description})</label>
+				</div>
+			</f:for>
+			</div>
+		</f:if>
+
 		<f:form.submit name="generateReport" value="Generate report" />
 
 	</f:form>
+
+		
 
 	<script type="text/javascript" src="{f:uri.resource(path: 'Libraries/jquery/jquery-1.9.1.min.js', package: 'TYPO3.Welcome')}"></script>
 	<script type="text/javascript" src="{f:uri.resource(path: 'JavaScript/TimeFlies.js')}"></script>

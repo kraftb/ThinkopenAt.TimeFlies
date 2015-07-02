@@ -7,22 +7,13 @@ namespace ThinkopenAt\TimeFlies\View;
  *                                                                        */
 
 use TYPO3\Flow\Annotations as Flow;
-use TYPO3\Flow\Utility\Arrays;
 
 /**
  * A CSV view
  *
  * @api
  */
-class CsvView extends AbstractReportView {
-
-	/**
-	 * The Content-Type HTTP header line which will be sent for reports of this type.
-	 *
-	 * @var string
-	 */
-	protected $contentType = 'text/csv';
-
+class CsvView extends AbstractReportView implements ReportInterface {
 
 	/**
 	 * The CSV rendering configuration.
@@ -137,9 +128,7 @@ class CsvView extends AbstractReportView {
 	 * @api
 	 */
 	public function render() {
-		$this->initRender();
 
-		$this->configuration = Arrays::arrayMergeRecursiveOverrule($this->settings['General'], $this->settings['Csv']);
 
 		$this->setupCsvOptions();
 
@@ -280,6 +269,52 @@ class CsvView extends AbstractReportView {
 	 */
 	protected function encloseValue($value) {
 		return $this->enclosureCharacter . $value . $this->enclosureCharacter;
+	}
+
+	/*
+ 	 * Returns the file extension which is used for CSV report files
+ 	 *
+ 	 * @return string The string "csv"
+ 	 */
+	public function getFileExtension() {
+		return 'csv';
+	}
+
+	/*
+ 	 * Returns the HTTP Content-Type which is used for CSV reports
+ 	 *
+ 	 * @return string The string "text/csv"
+ 	 */
+	public function getContentType() {
+		return 'text/csv';
+	}
+
+	/*
+ 	 * Returns the format key which is used for CSV reports
+ 	 *
+ 	 * @return string The string "csv"
+ 	 */
+	public function getFormatKey() {
+//		return 'ThinkopenAt.TimeFlies.Csv';
+		return 'csv';
+	}
+
+	/*
+ 	 * Returns the name of the report generate class
+ 	 *
+ 	 * @return string The name of the report class
+ 	 */
+	public function getName() {
+		return 'CSV Report';
+	}
+
+	/*
+ 	 * Returns a description for the report generate class
+ 	 *
+ 	 * @return string A textual description of the report type
+ 	 */
+	public function getDescription() {
+		return 'A simple CSV report with start, stop and duration fields, category and comment. Elements are grouped by category and sorted by begin time.';
 	}
 
 }

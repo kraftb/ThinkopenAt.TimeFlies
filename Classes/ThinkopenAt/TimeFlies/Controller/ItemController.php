@@ -8,6 +8,8 @@ namespace ThinkopenAt\TimeFlies\Controller;
 
 use TYPO3\Flow\Annotations as Flow;
 use TYPO3\Flow\Mvc\Controller\ActionController;
+use TYPO3\Flow\Utility\Arrays;
+
 use ThinkopenAt\TimeFlies\Domain\Model\Category;
 use ThinkopenAt\TimeFlies\Domain\Model\Item;
 use ThinkopenAt\TimeFlies\Domain\Dto\ReportConfiguration;
@@ -33,12 +35,17 @@ class ItemController extends ActionController {
 	protected $hashService;
 
 	/**
-  	 * @var string
-    */
-	protected $viewFormatToObjectNameMap = array(
-		'html' => 'TYPO3\Fluid\View\TemplateView',
-		'csv' => 'ThinkopenAt\TimeFlies\View\CsvView'
-	);
+	 * Will get initialized to the configured report views.
+	 *
+	 * @var array
+	 */
+	protected $reportViews;
+
+	/**
+	 * @var array
+	 * @Flow\Inject(setting="Reports")
+	 */
+	protected $reportSettings;
 
 	/**
 	 * @param \ThinkopenAt\TimeFlies\Domain\Model\Category $category
@@ -167,11 +174,101 @@ class ItemController extends ActionController {
 
 	/**
 	 * @param \ThinkopenAt\TimeFlies\Domain\Model\Category $category
+	 * @param string $format: The currently selected format (if any)
 	 * @return void
 	 */
-	public function configureReportAction(Category $category = NULL) {
+	public function configureReportAction(Category $category = NULL, $format = '') {
 		$this->view->assign('category', $category);
 		$this->view->assign('now', new \DateTime());
+		$this->initializeReportFormats($format);
+		$this->view->assign('possibleFormats', $this->reportViews);
+	}
+
+	/**
+	 * Initializes the "reportViews" class property. This property contains a presentation
+	 * of all views which can get used for generating a report. The property is retrieved
+	 * by iterating over the reports configured via Settings.yaml
+	 *
+	 * Each view gets instanciated and will have to identify itself by giving the formatKey
+	 * it handles, its name and a description about it.
+	 *
+	 * @param string $selectedFormat: The format/view which should get marked as selected one
+	 * @return void
+	 */
+	protected function initializeReportFormats($selectedFormat = '') {
+		$this->reportViews = array();
+		$cnt = 0;
+		foreach ($this->reportSettings as $reportKey => $reportSetting) {
+			if ($reportKey === 'General') {
+				continue;
+			}
+			if (!isset($reportSetting['viewClass'])) {
+				// @todo: Define a convention for determining the name of a viewClass
+				throw new \Exception('Each configured report type must have a viewClass specified!');
+			}
+			$class = $reportSetting['viewClass'];
+			if (!class_exists($class)) {
+				throw new \Exception('Report view class "' . $class . '" does not exist!!');
+			}
+			$viewInstance = $this->objectManager->get($class);
+			if (!$viewInstance instanceof \ThinkopenAt\TimeFlies\View\ReportInterface) {
+				throw new \Exception('Views being used for generating a report must implement the ReportInterface!');
+			}
+			$formatKey = $viewInstance->getFormatKey();
+			$selected = false;
+			if ($selectedFormat) {
+				$selected = $formatKey === $selectedFormat ? true : false;
+			} else {
+				$selected = $cnt ? false : true;
+			}
+			$this->reportViews[$formatKey] = array(
+				'class' => $class,
+				'reportKey' => $reportKey,
+				'name' => $viewInstance->getName(),
+				'description' => $viewInstance->getDescription(),
+				'selected' => $selected,
+			);
+			$cnt++;
+		}
+	}
+
+	/**
+	 * This method sets the ActionController property "viewFormatToObjectNameMap" to
+	 * all configured report views.
+	 *
+	 * @return void
+	 */
+	protected function initializeViewFormatToObjectNameMap() {
+		$this->viewFormatToObjectNameMap = array();
+		foreach ($this->reportViews as $reportFormat => $reportView) {
+			$this->viewFormatToObjectNameMap[$reportFormat] = $reportView['class'];
+		}
+	}
+
+	/**
+	 * Initializes the view before invoking an action method.
+	 *
+	 * Will call the "initializeReport" method if the view implements the ReportInterface
+	 *
+	 * @param \TYPO3\Flow\Mvc\View\ViewInterface $view The view to be initialized
+	 * @return void
+	 */
+	protected function initializeView(\TYPO3\Flow\Mvc\View\ViewInterface $view) {
+		if ($view instanceof \ThinkopenAt\TimeFlies\View\ReportInterface) {
+			$format = $this->request->getFormat();
+			$reportKey = $this->reportViews[$format]['reportKey'];
+			$view->initializeReport($reportKey);
+		}
+	}
+
+	/**
+	 * Initializes the generateReport action by retrieving/setting the list of possible output formats.
+	 *
+	 * @return void
+	 */
+	public function initializeGenerateReportAction() {
+		$this->initializeReportFormats();
+		$this->initializeViewFormatToObjectNameMap();
 	}
 
 	/**
@@ -180,11 +277,16 @@ class ItemController extends ActionController {
 	 * @return void
 	 */
 	public function generateReportAction(ReportConfiguration $reportConfiguration, Category $category = NULL) {
+		if (!$this->view instanceof \ThinkopenAt\TimeFlies\View\ReportInterface) {
+			throw new \Exception('No valid report format selected');
+		}
 		$reportConfiguration->setBeginFromParts();
 		$reportConfiguration->setEndFromParts();
 		$items = $this->itemRepository->findForReport($reportConfiguration, $category);
 
 		$this->view->assign('value', $items);
+		$this->view->assign('category', $category);
+		$this->view->assign('reportConfiguration', $reportConfiguration);
 	}
 
 }
