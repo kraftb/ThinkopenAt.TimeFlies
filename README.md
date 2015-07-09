@@ -99,13 +99,22 @@ prefilled with the end time of the previous entry.
 
 Using the buttons "+" and "-" when in a date or time field you can increase/decrease
 the date or the time. Dates are increased/decreased day wise. Time is increased/decreased
-in steps of a quarter hour (15 minutes).
+in steps of a quarter hour (15 minutes). When you hold the shift key while incrementing/decrementing
+the time fields (So you are typing "*" or "_") then time will increment/decrement in
+steps of a whole hour.
+
+When the end time rolls over midnight a "+1" will get suffixed.
 
 The categories you created before can be selected in the drop down. They are rendered
 there in a tree-like fashion.
 
 The last field is for entering some comments to each entry - like a reference to a tracker entry,
 some internal notes, etc.
+
+Now when you have filled in the values for a single line you can either use the "Add line" button
+or press the hotkey "Alt+n" for creating a new line. The focus will automatically get set to the "end time" field of the new line.
+
+There is also an alternate "Add line" hotkey - there is not button for it. When you press "Alt+N" (Upper "N". So: Alt-Shift-n) then the new line will keep the selected category and comment. This makes sense if you took a break while working on the same project. Currently the focus is still set to the "end time" field as for normal "new line" hotkey. But it would probably make more sense to set the focus on the "start time" field in this case.
 
 Finally you have to use the "Create" button to let all your time entries get persisted by the
 repository.
@@ -115,11 +124,17 @@ You see - easy as it could be.
 Of course there are still quite a few of bugs and known issues which I collect in my non-public
 mantis bugtracker. If you are interested in colaboration just contact me.
 
-## Some known issues
+## Changelog
 
-* There is no hotkey for adding a new line
-* It is not possible to have entries spanning across midnight
-* Using an alternate "Add line" hotkey it should be possible to keep the comment and category
-* When editing a time-field the auto-sanitize feature can become annoying
+* Allow to increase/decrease time by whole-hour steps by holding the shift key while pressing +/-
+* Added hotkeys for adding a new line.
+* Added another hotkey for adding a new line and keeping comments
+* It is now possible to have entries spanning across midnight
+* Editing the time fields manually should now work properly. Just don't press any bound key (+-*_) while editing a time field
+* Added an LibreOffice ODS report output option
 
+## Issues and bug reports
 
+If you are using this package feel free to contact me for an account on my personal bug tracker: http://support.think-open.at
+
+The project is public there but registering new accounts has been disabled to counterfeit spam.
