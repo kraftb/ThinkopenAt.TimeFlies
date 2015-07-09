@@ -5,7 +5,7 @@
 				<f:format.date format="Y-m-d">{item.begin}</f:format.date>
 				<f:format.date format="H:i">{item.begin}</f:format.date>
 				-
-				<f:if condition="{f:format.date(format: 'Y-m-D', date: item.begin)} != {f:format.date(format: 'Y-m-D', date: item.end)}">
+				<f:if condition="{item.spansAcrossMidnight}">
 					<f:then>
 						<f:format.date format="Y-m-d">{item.end}</f:format.date>
 					</f:then>

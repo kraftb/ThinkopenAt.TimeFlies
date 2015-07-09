@@ -221,5 +221,14 @@ class Item {
 		return sprintf('%.02f', $hours + $fraction);
 	}
 
+	/**
+	 * @return boolean
+	 */
+	public function getSpansAcrossMidnight() {
+		$begin = $this->begin->format('Y-m-d');
+		$end = $this->end->format('Y-m-d');
+		return strcmp($begin, $end) ? TRUE : FALSE;
+	}
+
 }
 
