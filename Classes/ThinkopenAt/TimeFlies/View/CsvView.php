@@ -139,7 +139,6 @@ class CsvView extends AbstractReportView implements ReportInterface {
 
 		// Render variables
 		$this->renderArray();
-
 		return implode($this->lineSeparator, $this->csvContent);
 	}
 
@@ -235,14 +234,16 @@ class CsvView extends AbstractReportView implements ReportInterface {
 	 */
 	protected function getObjectProperty($object, array $property) {
 		$value = \TYPO3\Flow\Reflection\ObjectAccess::getProperty($object, $property['name']);
+		$doEscape = true;
 		if ($value instanceof \DateTime) {
 			$value = $value->format(isset($property['format']) ? $property['format'] : $this->dateFormat);
 		} else {
 			if (is_object($value) && isset($property['subProperty']) && is_array($property['subProperty'])) {
+				$doEscape = false;
 				$value = $this->getObjectProperty($value, $property['subProperty']);
 			}
 		}
-		if (strpbrk($value, $this->specialCharacters) !== FALSE) {
+		if ($doEscape && strpbrk($value, $this->specialCharacters) !== FALSE) {
 			$value = $this->encloseValue($this->escapeValue($value));
 		}
 		return $value;

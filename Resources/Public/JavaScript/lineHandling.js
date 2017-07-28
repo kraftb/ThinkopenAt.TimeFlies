@@ -3,7 +3,9 @@ var idx = 0;
 
 var addLineFunc = function(key, keepCategory, keepComment) {
 	var cont = $('#itemsContainer');
+//	console.log(cont.html());
 	var lastBlock = cont.children().last();
+//	console.log(lastBlock.html());
 
 	var newBlock = getNewBlock(lastBlock, keepCategory, keepComment);
 
@@ -26,5 +28,7 @@ var addLineFunc = function(key, keepCategory, keepComment) {
 $('#addLine').bind('click', addLineFunc);
 
 // Create first line
-addLineFunc("X");
+$(document).ready(function() {
+	addLineFunc("X");
+});
 
