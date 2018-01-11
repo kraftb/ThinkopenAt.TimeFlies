@@ -169,9 +169,9 @@ TimeFlies.Time.prototype = {
 	 * @return object Returns itself for call chaining
 	 */
 	updateWhenSmaller: function(obj) {
-		var otherTime = new TimeFlies.Time(obj.val());
+		var otherTime = new TimeFlies.Time(obj.value);
 		if (otherTime.toInt() < this.toInt()) {
-			obj.val(this.toString());
+			obj.value = this.toString();
 		}
 		return this;
 	},
@@ -183,9 +183,9 @@ TimeFlies.Time.prototype = {
 	 * @return object Returns itself for call chaining
 	 */
 	updateWhenLarger: function(obj) {
-		var otherTime = new TimeFlies.Time(obj.val());
+		var otherTime = new TimeFlies.Time(obj.value);
 		if (otherTime.toInt() > this.toInt()) {
-			obj.val(this.toString());
+			obj.value = this.toString();
 		}
 		return this;
 	}

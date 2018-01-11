@@ -1,59 +1,63 @@
 
-$('.timeField').bind('keypress', function(key) {
+var alterTimeField = function(e) {
 	var offset = 0;
-	if (key.key == "+") {
+	if (e.key == "+") {
 		offset = +15;
-	} else if (key.key == "*") {
+	} else if (e.key == "*") {
 		offset = +60;
-	} else if (key.key == "-") {
+	} else if (e.key == "-") {
 		offset = -15;
-	} else if (key.key == "_") {
+	} else if (e.key == "_") {
 		offset = -60;
 	}
 	if (offset != 0) {
-		var t = $(key.target);
-
- 		var newTime = new TimeFlies.Time( t.val(), t.data('enabledayoffset') ? true : false );
-		t.val( newTime.alter(offset).toString() );
-
-		key.preventDefault();
+		var obj = e.target;
+ 		var newTime = new TimeFlies.Time( obj.value, obj.dataset.enabledayoffset ? true : false);
+		obj.value = newTime.alter(offset).toString();
+		e.preventDefault();
 	}
-});
+};
 
-$('.beginTime').bind('change keypress', function(o) {
-		if (
-			(o.type != 'keypress') || (
-				(o.key == '+') ||
-				(o.key == '*') ||
-				(o.key == '-') ||
-				(o.key == '_')
-			)
-		) {
-			var t = $(o.target);
-			var beginTime = new TimeFlies.Time( t.val(), t.data('enabledayoffset') ? true : false );
-			beginTime.normalize();
-			t.val( beginTime.toString() );
+var handleBeginTimeField = function(e) {
+	if (
+		(e.type != 'keypress') || (
+			(e.key == '+') ||
+			(e.key == '*') ||
+			(e.key == '-') ||
+			(e.key == '_')
+		)
+	) {
+		var obj = e.target;
+		var beginTime = new TimeFlies.Time( obj.value, obj.dataset.enabledayoffset ? true : false );
+		beginTime.normalize();
+		obj.value = beginTime.toString();
+		var otherField = obj.parentElement.querySelector('.endTime');
+		beginTime.updateWhenSmaller( otherField );
+	}
+};
 
-			beginTime.updateWhenSmaller( t.parent().children('.endTime') );
-		}
-});
+var handleEndTimeField = function(e) {
+	if (
+		(e.type != 'keypress') || (
+			(e.key == '+') ||
+			(e.key == '*') ||
+			(e.key == '-') ||
+			(e.key == '_')
+		)
+	) {
+		var obj = e.target;
+		var endTime = new TimeFlies.Time( obj.value, obj.dataset.enabledayoffset ? true : false );
+		endTime.normalize()
+		obj.value = endTime.toString();
+		var otherField = obj.parentElement.querySelector('.beginTime');
+		endTime.updateWhenLarger( otherField );
+	}
+};
 
-$('.endTime').bind('change keypress', function(o) {
-		if (
-			(o.type != 'keypress') || (
-				(o.key == '+') ||
-				(o.key == '*') ||
-				(o.key == '-') ||
-				(o.key == '_')
-			)
-		) {
-			var t = $(o.target);
-			var endTime = new TimeFlies.Time( t.val(), t.data('enabledayoffset') ? true : false );
-			endTime.normalize()
-			t.val( endTime.toString() );
 
-			endTime.updateWhenLarger( t.parent().children('.beginTime') );
-		}
-});
-
+function bindTimeEvents() {
+	connectEventsByClassName('.timeField', ['keypress'], alterTimeField);
+	connectEventsByClassName('.beginTime', ['change', 'keypress'], handleBeginTimeField);
+	connectEventsByClassName('.endTime', ['change', 'keypress'], handleEndTimeField);
+}
 

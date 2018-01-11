@@ -45,9 +45,18 @@
 
 		
 
-	<script type="text/javascript" src="{f:uri.resource(path: 'Libraries/jquery/jquery-1.9.1.min.js', package: 'TYPO3.Welcome')}"></script>
+	<script type="text/javascript" src="{f:uri.resource(path: 'JavaScript/to.js')}"></script>
+	<script type="text/javascript" src="{f:uri.resource(path: 'JavaScript/to-Events.js')}"></script>
 	<script type="text/javascript" src="{f:uri.resource(path: 'JavaScript/TimeFlies.js')}"></script>
 	<script type="text/javascript" src="{f:uri.resource(path: 'JavaScript/timeField.js')}"></script>
 	<script type="text/javascript" src="{f:uri.resource(path: 'JavaScript/dateField.js')}"></script>
+	<script type="text/javascript">
+
+window.addEventListener('load', function( ) {
+	bindTimeEvents();
+	bindDateEvents();
+});
+
+	</script>
 
 </f:section>

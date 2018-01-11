@@ -1,34 +1,53 @@
 
 var idx = 0;
 
-var addLineFunc = function(key, keepCategory, keepComment) {
-	var cont = $('#itemsContainer');
-//	console.log(cont.html());
-	var lastBlock = cont.children().last();
-//	console.log(lastBlock.html());
+var addLineFunc = function(e, keepCategory, keepComment) {
+	if (typeof e == "object") {
+		if (e.constructor.name == "MouseEvent") {
+			if (e.shiftKey) {
+				keepCategory = true;
+				keepComment = true;
+			}
+		}
+	}
 
-	var newBlock = getNewBlock(lastBlock, keepCategory, keepComment);
+	var container = document.getElementById('itemsContainer');
+	var template = container.children[container.children.length-1];
 
-	var newId = 'item_'+idx;
-	newBlock.attr('id', newId);
+	var newBlock = getNewBlock(template, keepCategory, keepComment);
 
-	newBlock.find('.itemField').each(function(index, obj) {
-		obj.name = updateFieldName(obj.name);
-//		console.log(obj);
-	});
+	var newId = 'item_' + idx;
+	newBlock.id = newId;
 
-	cont.append(newBlock);
-	newBlock.show();
+	var fields = newBlock.querySelectorAll('.itemField');
+	var templateFields = template.querySelectorAll('.itemField');
+	for (var i = 0; i < fields.length; i++) {
+		var c = fields[i];
+		var tf = templateFields[i];
+		c.name = updateFieldName(c.name);
+		if (typeof tf.toEvents == "object") {
+			for (var j = 0; j < tf.toEvents.length; j++) {
+				var e = tf.toEvents[j];
+				c.addEventListener(e.event, e.handler);
+			}
+		}
+	}
+
+	newBlock.style.display = "block";
+
+	container.appendChild(newBlock);
 
 	idx++;
 	return newId;
 };
 
-
-$('#addLine').bind('click', addLineFunc);
+document.getElementById('addLine').addEventListener('click', addLineFunc);
 
 // Create first line
-$(document).ready(function() {
+window.addEventListener('load', function( ) {
+	// console.info('Document has finished loading');
 	addLineFunc("X");
+	bindTimeEvents();
+	bindDateEvents();
 });
 

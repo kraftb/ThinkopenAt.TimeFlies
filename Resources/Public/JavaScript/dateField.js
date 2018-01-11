@@ -1,26 +1,36 @@
 
-$('.dateField').bind('keypress', function(key) {
-	if (key.key == "+") {
-		var t = $(key.target);
-
- 		var newDate = new TimeFlies.Date( t.val() );
-		t.val( newDate.alter(+1).toString() );
-
-		key.preventDefault();
-	} else if (key.key == "-") {
-		var t = $(key.target);
-
- 		var newDate = new TimeFlies.Date( t.val() );
-		t.val( newDate.alter(-1).toString() );
-
-		key.preventDefault();
+var alterDateField = function(e) {
+	if (
+		e.key == "+" ||
+		e.key == "-" ||
+		e.key == "*" ||
+		e.key == "_"
+	) {
+		var t = e.target;
+		var newDate = new TimeFlies.Date( t.value );
+		if (e.key == "+") {
+			t.value = newDate.alter(+1).toString();
+		} else if (e.key == "-") {
+			t.value = newDate.alter(-1).toString();
+		} else if (e.key == "*") {
+			t.value = newDate.alter(+31).toString();
+		} else if (e.key == "_") {
+			t.value = newDate.alter(-31).toString();
+		}
+		e.preventDefault();
 	}
-});
+};
 
-$('.dateField').bind('change', function(o) {
-		var t = $(o.target);
-		var checkDate = new TimeFlies.Date(t.val());
-		checkDate.normalize();
-		t.val(checkDate.toString());
-});
+var checkDateField = function(e) {
+	var t = e.target;
+	var checkDate = new TimeFlies.Date( t.value );
+	checkDate.normalize();
+	t.value = checkDate.toString();
+};
+
+
+function bindDateEvents() {
+	connectEventsByClassName('.dateField', ['keypress'], alterDateField);
+	connectEventsByClassName('.dateField', ['change'], checkDateField);
+}
 
