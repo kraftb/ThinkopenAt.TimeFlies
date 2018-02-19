@@ -14,13 +14,13 @@ use TYPO3\Fluid\ViewHelpers\Form\SelectViewHelper;
  *
  * @api
  */
-class CategorySelectViewHelper extends AbstractCategorySelectViewHelper {
+class CategorySelectViewHelper extends AbstractTreeSelectViewHelper {
 
 	/**
 	 * @Flow\Inject
 	 * @var \ThinkopenAt\TimeFlies\Domain\Repository\CategoryRepository
 	 */
-	protected $categoryRepository;
+	protected $elementRepository;
 
 }
 

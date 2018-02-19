@@ -14,7 +14,7 @@ use TYPO3\Fluid\ViewHelpers\Form\SelectViewHelper;
  *
  * @api
  */
-abstract class AbstractCategorySelectViewHelper extends SelectViewHelper {
+abstract class AbstractTreeSelectViewHelper extends SelectViewHelper {
 
 	/**
 	 * @var array
@@ -88,13 +88,17 @@ abstract class AbstractCategorySelectViewHelper extends SelectViewHelper {
 		unset($this->arguments['prependOptionLabel']);
 
 		$output .= $this->alternateSubOptions($value);
-		$output .= $this->renderSubOptions($this->categoryRepository->findByParent($value));
+		$output .= $this->renderSubOptions($this->getChilds($value));
 
 		return $output;
 	}
 		
 	protected function alternateSubOptions($value) {
 		return '';
+	}
+
+	protected function getChilds($value) {
+		return $this->elementRepository->findByParent($value);
 	}
 
 	protected function renderSubOptions($children) {
